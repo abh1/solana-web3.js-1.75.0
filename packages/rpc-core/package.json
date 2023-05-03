@@ -68,7 +68,7 @@
         "@types/jest": "^29.5.0",
         "@typescript-eslint/eslint-plugin": "^5.43.0",
         "@typescript-eslint/parser": "^5.43.0",
-        "agadoo": "^2.0.0",
+        "agadoo": "^3.0.0",
         "build-scripts": "workspace:*",
         "eslint": "^8.27.0",
         "eslint-plugin-jest": "^27.1.5",
