@@ -1,0 +1,27 @@
+{
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "build": "turbo run build",
+        "lint": "turbo run test:lint",
+        "publish-packages": "turbo run publish-packages",
+        "test": "turbo run test:unit:browser test:unit:node",
+        "test:live-with-test-validator": "turbo run test:live-with-test-validator",
+        "test:live-with-test-validator:setup": "./scripts/setup-test-validator.sh"
+    },
+    "devDependencies": {
+        "@commitlint/config-conventional": "^17.0.2",
+        "@solana/eslint-config-solana": "^0.0.4",
+        "@solana/prettier-config-solana": "^0.0.1",
+        "commitlint": "^17.4.2",
+        "eslint-config-turbo": "^0.0.7",
+        "turbo": "^1.8.8"
+    },
+    "engines": {
+        "node": ">=14.0.0"
+    },
+    "packageManager": "pnpm@7.17.0",
+    "prettier": "@solana/prettier-config-solana"
+}

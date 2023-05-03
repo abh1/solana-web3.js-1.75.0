@@ -1,0 +1,71 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  # Enables Turborepo Remote Caching.
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install package manager
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7.26.3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Get Test Validator Latest Release
+        id: get-test-validator-version
+        run: |
+          echo "version=$(./scripts/get-latest-validator-release-version.sh)" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Cache Test Validator
+        id: cache-test-validator
+        uses: actions/cache@v3
+        with:
+          path: /home/runner/.local/share/solana
+          key: ${{ runner.os }}-test-validator-${{ steps.get-test-validator-version.outputs.version }}
+
+      - name: Install Test Validator
+        if: steps.cache-test-validator.outputs.cache-hit != 'true'
+        run: scripts/setup-test-validator.sh
+
+      - name: Publish NPM
+        run: |
+          pnpm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+          pnpm publish-packages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Deploy Github Page
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./packages/library-legacy/doc
+
+      - name: Upload Experimental library build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: library-dist
+          path: |
+            ./packages/library/dist/
+            ./packages/library/package.json
