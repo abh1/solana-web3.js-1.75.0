@@ -8,7 +8,7 @@
         "tsup.config.package.ts"
     ],
     "devDependencies": {
-        "@types/node": "^18.11.10",
+        "@types/node": "^20.11.10",
         "tsconfig": "workspace:*",
         "tsup": "6.7.0"
     }
